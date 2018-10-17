@@ -11,6 +11,7 @@ const typeDefs = gql`
     guid: String
     date: String
     creator: String
+    tag: String
   }
   
   type RSS {
@@ -18,33 +19,21 @@ const typeDefs = gql`
   }
 
   type Query {
-    feed(url: String): RSS
+    feed(url: String, tag: String): RSS
   }
 `
-
-/*
-{
-  title: 'Rock Wall',
-  link: 'https://xkcd.com/2058/',
-  pubDate: 'Fri, 12 Oct 2018 04:00:00 -0000',
-  content: '<img src="https://imgs.xkcd.com/comics/rock_wall.png" title="I don\'t trust mantle/core geologists because I suspect that, if they ever get a chance to peel away the Earth\'s crust, they\'ll do it in a heartbeat." alt="I don\'t trust mantle/core geologists because I suspect that, if they ever get a chance to peel away the Earth\'s crust, they\'ll do it in a heartbeat." />',
-  contentSnippet: '',
-  guid: 'https://xkcd.com/2058/',
-  isoDate: '2018-10-12T04:00:00.000Z'
-}
-*/
 
 const resolvers = {
   Query: {
     feed (root, args, context, info) {
       if (!args.url) return []
-      return new Parser().parseURL(args.url)
+      const tag = args.tag || null
+      return new Parser().parseURL(args.url).then(({ items }) => ({ items, tag }))
     }
   },
   RSS: {
-    items (parent, args, context, info) {
-      console.log(parent.items[0])
-      return parent.items
+    items ({ items, tag }, args, context, info) {
+      return items.map(item => ({ ...item, tag }))
     }
   },
   Item: {

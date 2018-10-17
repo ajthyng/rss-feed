@@ -2,18 +2,19 @@ import ApolloClient from 'apollo-boost'
 import gql from 'graphql-tag'
 
 const client = new ApolloClient({
-  uri: 'http://192.168.1.248:4000/'
+  uri: 'http://localhost:4000/'
 })
 
-export function rss (url, name = 'No Tag') {
+export function rss (url, tag = 'NO TAG') {
   const rssQuery = gql`{
-    feed(url: "${url}") {
+    feed(url: "${url}", tag: "${tag}") {
       items {
         title
         link
         description
         date
         guid
+        tag
       }
     }
   }`

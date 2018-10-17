@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import styled, { withTheme } from 'styled-components'
+import { withTheme } from 'styled-components'
 import Feed from './components/Feed/Feed'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -9,7 +9,6 @@ import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import PlusIcon from '@material-ui/icons/Add'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import Backdrop from '@material-ui/core/Backdrop'
 
 const theme = createMuiTheme({
   palette: {
@@ -25,22 +24,16 @@ const theme = createMuiTheme({
       dark: '#004a76',
       contrastText: '#ffffff'
     }
+  },
+  typography: {
+    useNextVariants: true
   }
 })
-
-const Container = styled.div`
-  background-color: ${props => props.theme.background};
-  overflow-y: scroll;
-  height: 100%;
-  width: 100%;
-  position: fixed;
-`
 
 class App extends Component {
   render () {
     return (
       <MuiThemeProvider theme={theme}>
-
         <AppBar position='static' color='primary'>
           <Toolbar>
             <IconButton
@@ -50,19 +43,17 @@ class App extends Component {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant='h6' color='inherit' style={{ flexGrow: 1 }}>
+            <Typography variant='h6' color='inherit' style={{ flex: 1 }}>
               News
             </Typography>
-            <Button color='inherit'>
+            <Button color='inherit' style={{ justifyContent: 'flex-end' }}>
               <PlusIcon />
               Add Feed
             </Button>
           </Toolbar>
         </AppBar>
-        <Backdrop>
-          <Feed />
-        </Backdrop>
 
+        <Feed />
       </MuiThemeProvider>
     )
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import { rss } from '../../util/rss'
+import { getRss } from '../../util/rss'
 import Grid from '@material-ui/core/Grid'
 import dayjs from 'dayjs'
 import CardItem from './CardItem'
@@ -25,22 +25,21 @@ class Feed extends Component {
     items: []
   }
 
+  setItems = items => this.setState({ items: items.sort(byDate) })
+
   componentDidMount () {
     const feeds = [
-      rss('http://feeds.arstechnica.com/arstechnica/gaming', 'Ars Technica'),
-      rss('https://xkcd.com/rss.xml', 'XKCD'),
-      rss('https://news.ycombinator.com/rss', 'Y Combinator'),
-      rss('https://www.mmo-champion.com/external.php?do=rss&type=newcontent&sectionid=1&days=120&count=5', 'MMO Champion')
+      { url: 'http://feeds.arstechnica.com/arstechnica/gaming', tag: 'Ars Technica' },
+      { url: 'https://xkcd.com/rss.xml', tag: 'XKCD' },
+      { url: 'https://news.ycombinator.com/rss', tag: 'Y Combinator' },
+      { url: 'https://www.mmo-champion.com/external.php?do=rss&type=newcontent&sectionid=1&days=120&count=5', tag: 'MMO Champion' }
     ]
 
-    Promise.all(feeds).then(data => {
-      const items = data.reduce((accum, { data: { feed } }) => {
-        accum.push(...feed.items)
-        return accum
-      }, [])
-      items.sort(byDate)
-      this.setState({ items })
-    })
+    this.rss$ = getRss(feeds).subscribe(this.setItems)
+  }
+
+  componentWillUnmount () {
+    this.rss$.unsubscribe()
   }
 
   render () {

@@ -1,7 +1,6 @@
 import ApolloClient from 'apollo-boost'
 import gql from 'graphql-tag'
-import { from, of } from 'rxjs'
-import { map, concatMap, onErrorResumeNext, mergeMap, scan, reduce } from 'rxjs/operators'
+import { from, fromPromise } from 'most'
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/'
@@ -24,23 +23,16 @@ function rss (url, tag = 'NO TAG') {
     query: rssQuery,
     errorPolicy: 'ignore',
     fetchPolicy: 'no-cache'
-  }).then(({ data }) => data)
+  }).then(({ data }) => ({ data, tag }))
 }
 
 export function getRss (feeds = []) {
-  return from(feeds).pipe(
-    mergeMap(({ url: feed, tag }) => {
-      return of(rss(feed)).pipe(
-        onErrorResumeNext(),
-        concatMap(data => data),
-        map(({ feed }) => feed),
-        map(({ items }) => ({ items, tag })),
-        scan((accum, feed) => {
-          const items = feed.items.map(item => ({ ...item, tag: feed.tag }))
-          return [...accum, ...items]
-        }, [])
-      )
-    }),
-    reduce((accum, feed) => [...accum, ...feed], [])
+  return fromPromise(
+    from(feeds)
+      .map(({ url, tag }) => rss(url, tag))
+      .flatMap(rss => fromPromise(rss))
+      .map(({ data, tag }) => data.feed.items.map(item => ({ ...item, tag })))
+      .flatMap(items => from(items))
+      .reduce((items, item) => [...items, item], [])
   )
 }

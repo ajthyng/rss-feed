@@ -20,7 +20,11 @@ function rss (url, tag = 'NO TAG') {
     }
   }`
   // throw new Error('err')
-  return client.query({ query: rssQuery })
+  return client.query({
+    query: rssQuery,
+    errorPolicy: 'ignore',
+    fetchPolicy: 'no-cache'
+  }).then(({ data }) => data)
 }
 
 export function getRss (feeds = []) {
@@ -29,7 +33,7 @@ export function getRss (feeds = []) {
       return of(rss(feed)).pipe(
         onErrorResumeNext(),
         concatMap(data => data),
-        map(({ data }) => data.feed),
+        map(({ feed }) => feed),
         map(({ items }) => ({ items, tag })),
         scan((accum, feed) => {
           const items = feed.items.map(item => ({ ...item, tag: feed.tag }))

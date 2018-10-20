@@ -20,6 +20,22 @@ const CardFooter = styled(CardActions)`
   justify-content: space-between;
 `
 
+const format = (date) => {
+  const today = dayjs()
+  const articleDate = dayjs(date)
+  const daysOld = today.diff(articleDate, 'days')
+
+  if (daysOld >= 7) {
+    return 'Last Week'
+  } else if (daysOld > 1) {
+    return `${daysOld} days ago`
+  } else if (daysOld >= 1) {
+    return `Yesterday - ${articleDate.format('h:mma')}`
+  } else {
+    return `Today - ${articleDate.format('h:mma')}`
+  }
+}
+
 function CardItem (props) {
   const { tag, title, date, link } = props
   const openLink = () => window.open(link)
@@ -35,7 +51,7 @@ function CardItem (props) {
       </CardContent>
       <CardFooter>
         <Typography component='p' style={{ paddingLeft: 12 }}>
-          {dayjs(date).format('h:MMa')}
+          {format(date)}
         </Typography>
         <IconButton
           onClick={openLink}

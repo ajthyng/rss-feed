@@ -4,6 +4,7 @@ import { getRss } from '../../util/rss'
 import Grid from '@material-ui/core/Grid'
 import dayjs from 'dayjs'
 import CardItem from './CardItem'
+import { observer } from 'mobx'
 
 const Container = styled.div`
   display: flex;
@@ -20,7 +21,7 @@ const byDate = (a, b) => {
   return bDate.valueOf() - aDate.valueOf()
 }
 
-class Feed extends Component {
+@observer class Feed extends Component {
   state = {
     items: []
   }
@@ -35,11 +36,7 @@ class Feed extends Component {
       { url: 'https://www.mmo-champion.com/external.php?do=rss&type=newcontent&sectionid=1&days=120&count=5', tag: 'MMO Champion' }
     ]
 
-    this.rss$ = getRss(feeds).subscribe({
-      next: (items) => this.setItems(items),
-      error: () => null,
-      complete: () => null
-    })
+    getRss(feeds)
   }
 
   componentWillUnmount () {

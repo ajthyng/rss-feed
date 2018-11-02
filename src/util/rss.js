@@ -2,15 +2,37 @@ import ApolloClient from 'apollo-boost'
 import gql from 'graphql-tag'
 import { observable } from 'mobx'
 import { from, fromPromise } from 'most'
+import dayjs from 'dayjs'
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/'
 })
 
+const byDate = (a, b) => {
+  const aDate = dayjs(a.date)
+  const bDate = dayjs(b.date)
+
+  return bDate.valueOf() - aDate.valueOf()
+}
+
 class RssFeedStore {
   @observable rssItems = []
+  @observable feeds = [
+    { url: 'http://feeds.arstechnica.com/arstechnica/gaming', tag: 'Ars Technica' },
+    { url: 'https://xkcd.com/rss.xml', tag: 'XKCD' },
+    { url: 'https://news.ycombinator.com/rss', tag: 'Y Combinator' },
+    { url: 'https://www.mmo-champion.com/external.php?do=rss&type=newcontent&sectionid=1&days=120&count=5', tag: 'MMO Champion' }
+  ]
 
-  rss = (url, tag = 'NO TAG') => {
+  addFeed = (url, tag) => {
+    this.feeds.push({ url, tag })
+  }
+
+  removeFeed = (url) => {
+
+  }
+
+  getRssFeed (url, tag = 'NO TAG') {
     const rssQuery = gql`{
       feed(url: "${url}", tag: "${tag}") {
         items {
@@ -30,16 +52,17 @@ class RssFeedStore {
     }).then(({ data }) => ({ data, tag }))
   }
 
-  getRss = (feeds = []) => {
+  rssFeeds () {
     fromPromise(
-      from(feeds)
-        .map(({ url, tag }) => this.rss(url, tag))
+      from(this.feeds)
+        .map(({ url, tag }) => this.getRssFeed(url, tag))
         .flatMap(rss => fromPromise(rss))
+        .tap(console.log)
         .map(({ data, tag }) => data.feed.items.map(item => ({ ...item, tag })))
         .flatMap(items => from(items))
         .reduce((items, item) => [...items, item], [])
     ).subscribe({
-      next: rssItems => { this.rssItems = rssItems }
+      next: rssItems => { this.rssItems = rssItems.sort(byDate) }
     })
   }
 }

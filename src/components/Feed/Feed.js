@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid'
 import CardItem from './CardItem'
-import { observer } from 'mobx-react'
 
 const Container = styled.div`
   display: flex;
@@ -12,7 +11,6 @@ const Container = styled.div`
   justify-content: space-around;
 `
 
-@observer
 class Feed extends Component {
   componentDidMount () {
     this.props.store.rssFeeds()

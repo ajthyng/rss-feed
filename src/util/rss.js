@@ -1,11 +1,10 @@
 import ApolloClient from 'apollo-boost'
 import gql from 'graphql-tag'
-import { observable } from 'mobx'
 import { from, fromPromise } from 'most'
 import dayjs from 'dayjs'
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/'
+  uri: 'http://localhost/api/'
 })
 
 const byDate = (a, b) => {
@@ -16,8 +15,8 @@ const byDate = (a, b) => {
 }
 
 class RssFeedStore {
-  @observable rssItems = []
-  @observable feeds = [
+  rssItems = []
+  feeds = [
     { url: 'http://feeds.arstechnica.com/arstechnica/gaming', tag: 'Ars Technica' },
     { url: 'https://xkcd.com/rss.xml', tag: 'XKCD' },
     { url: 'https://news.ycombinator.com/rss', tag: 'Y Combinator' },

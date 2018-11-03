@@ -8,17 +8,24 @@ services:
       - rss-ui
       - rss-api
     volumes:
-      - ./nginx.dev.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    container_name: nginx
   rss-ui:
     build:
       context: .
     volumes:
       - ./src:/usr/src/app/src
+      - ./scripts:/usr/src/app/scripts
+      - ./config:/usr/src/app/config
       - ./public:/usr/src/app/public
       - ./node_modules:/usr/src/app/node_modules
+      - ./:/usr/src/app
+    container_name: website
   rss-api:
     build: ./api
     environment:
       CONTEXT_PATH: /api
     volumes:
-      - ../change-api/swagger.yml:/usr/src/app/swagger.yml
+      - ./api/node_modules:/usr/src/app/node_modules
+      - ./api:/usr/src/app
+    container_name: api

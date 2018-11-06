@@ -1,6 +1,5 @@
 import ApolloClient from 'apollo-boost'
 import gql from 'graphql-tag'
-import dayjs from 'dayjs'
 
 const client = new ApolloClient({
   uri: `http://${window.location.hostname}:4000/api/`

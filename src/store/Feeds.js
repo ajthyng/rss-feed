@@ -26,7 +26,7 @@ mirror.model({
   initialState: {
     loading: false,
     error: null,
-    feeds: []
+    feeds: JSON.parse(localStorage.getItem('feeds') || '[]')
   },
   reducers: {
     requestFeeds,

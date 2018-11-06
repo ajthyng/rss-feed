@@ -20,11 +20,11 @@ class Header extends Component {
             <MenuIcon />
           </IconButton>
           <Typography variant='h6' color='inherit' style={{ flex: 1 }}>
-          News
+            News
           </Typography>
           <Button color='inherit' style={{ justifyContent: 'flex-end' }}>
             <PlusIcon />
-          Add Feed
+            Add Feed
           </Button>
         </Toolbar>
       </AppBar>

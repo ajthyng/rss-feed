@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { withTheme } from 'styled-components'
 import Feed from './components/Feed/Feed'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import RssStore from './util/rss'
 import Header from './components/Header/Header'
 import LeftDrawer from './components/Drawer/LeftDrawer'
 
@@ -32,7 +31,7 @@ class App extends Component {
       <MuiThemeProvider theme={theme}>
         <Header />
         <LeftDrawer />
-        <Feed store={RssStore} />
+        <Feed />
       </MuiThemeProvider>
     )
   }

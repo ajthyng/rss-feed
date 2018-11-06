@@ -1,4 +1,5 @@
-const { ApolloServer, gql } = require('apollo-server')
+const express = require('express')
+const { ApolloServer, gql } = require('apollo-server-express')
 const Parser = require('rss-parser')
 
 const typeDefs = gql`
@@ -28,7 +29,9 @@ const resolvers = {
     feed (root, args, context, info) {
       if (!args.url) return []
       const tag = args.tag || null
-      return new Parser().parseURL(args.url).then(({ items }) => ({ items, tag }))
+      return new Parser()
+        .parseURL(args.url)
+        .then(({ items }) => ({ items, tag }))
     }
   },
   RSS: {
@@ -48,6 +51,9 @@ const resolvers = {
 
 const server = new ApolloServer({ typeDefs, resolvers })
 
-server.listen().then(({ url }) => {
-  console.log(`Server listening at ${url}`)
+const app = express()
+server.applyMiddleware({ app, path: '/api' })
+
+app.listen(4000, () => {
+  console.log(`Server listening at ${server.graphqlPath}`)
 })

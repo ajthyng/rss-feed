@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid'
 import CardItem from './CardItem'
+import { actions, connect } from 'mirrorx'
 
 const Container = styled.div`
   display: flex;
@@ -13,15 +14,23 @@ const Container = styled.div`
 
 class Feed extends Component {
   componentDidMount () {
-    this.props.store.rssFeeds()
+    actions.rss.getRssFeeds(this.props.rssUrls)
   }
   render () {
-    const { rssItems } = this.props.store
+    const { rssFeeds = [] } = this.props
     return (
       <Container>
         <Grid container spacing={16}>
-          {rssItems.map((item, index) => (
-            <Grid key={index.toString(10)} item xs={12} sm={6} md={4} lg={3} xl={2}>
+          {rssFeeds.map((item, index) => (
+            <Grid
+              key={index.toString(10)}
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              xl={2}
+            >
               <CardItem {...item} />
             </Grid>
           ))}
@@ -31,4 +40,9 @@ class Feed extends Component {
   }
 }
 
-export default Feed
+const mapStateToProps = state => ({
+  rssFeeds: state.rss.feeds,
+  rssUrls: state.urls.rss
+})
+
+export default connect(mapStateToProps)(Feed)

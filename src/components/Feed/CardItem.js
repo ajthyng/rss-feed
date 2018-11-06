@@ -20,12 +20,16 @@ const CardFooter = styled(CardActions)`
   justify-content: space-between;
 `
 
-const format = (date) => {
+const format = date => {
   const today = dayjs()
   const articleDate = dayjs(date)
   const daysOld = today.diff(articleDate, 'days')
 
-  if (daysOld >= 7) {
+  if (daysOld >= 21) {
+    return 'Quite Old'
+  } else if (daysOld >= 14) {
+    return 'Some Time Ago'
+  } else if (daysOld >= 7) {
     return 'Last Week'
   } else if (daysOld > 1) {
     return `${daysOld} days ago`
@@ -53,11 +57,7 @@ function CardItem (props) {
         <Typography component='p' style={{ paddingLeft: 12 }}>
           {format(date)}
         </Typography>
-        <IconButton
-          onClick={openLink}
-          color='inherit'
-          aria-label='Open in Tab'
-        >
+        <IconButton onClick={openLink} color='inherit' aria-label='Open in Tab'>
           <ExternalLink />
         </IconButton>
       </CardFooter>
